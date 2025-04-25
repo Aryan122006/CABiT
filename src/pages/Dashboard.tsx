@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Building, Calendar, Car, FileText, IndianRupee } from 'lucide-react';
 import StatCard from '@/components/dashboard/StatCard';
@@ -14,7 +13,6 @@ const Dashboard = () => {
   const [selectedBranchId, setSelectedBranchId] = useState('all');
   const { user } = useAuth();
   
-  // Mock data for branches
   const branches = [
     { id: 'all', name: 'All Branches', location: 'Pan India' },
     { id: 'delhi', name: 'Delhi HQ', location: 'New Delhi' },
@@ -24,7 +22,6 @@ const Dashboard = () => {
     { id: 'chennai', name: 'Chennai Branch', location: 'Chennai' },
   ];
   
-  // Mock data for trip status chart
   const tripStatusData = [
     { name: 'Active', value: 15, color: '#25b003' },
     { name: 'Pending', value: 8, color: '#ffbf00' },
@@ -32,7 +29,6 @@ const Dashboard = () => {
     { name: 'Cancelled', value: 5, color: '#e71d36' },
   ];
   
-  // Mock data for department cost chart
   const departmentCostData = [
     { department: 'HR', cost: 32000, color: '#1d5bb9' },
     { department: 'Engineering', cost: 51000, color: '#25b003' },
@@ -41,17 +37,16 @@ const Dashboard = () => {
     { department: 'Finance', cost: 18000, color: '#9b59b6' },
   ];
   
-  // Mock data for recent activity - converted to non-readonly array
   const recentActivities = [
     {
       id: '1',
-      employeeName: 'Raj Kumar',
+      employeeName: 'Aryan Kumar',
       departmentName: 'Engineering',
       origin: 'Delhi HQ',
       destination: 'IGI Airport T3',
       time: '10:30 AM',
       date: 'Today',
-      status: 'active',
+      status: 'active' as const,
     },
     {
       id: '2',
@@ -61,7 +56,7 @@ const Dashboard = () => {
       destination: 'Nariman Point',
       time: '09:15 AM',
       date: 'Today',
-      status: 'completed',
+      status: 'completed' as const,
     },
     {
       id: '3',
@@ -71,7 +66,7 @@ const Dashboard = () => {
       destination: 'Bangalore Office',
       time: '08:45 AM',
       date: 'Today',
-      status: 'completed',
+      status: 'completed' as const,
     },
     {
       id: '4',
@@ -81,7 +76,7 @@ const Dashboard = () => {
       destination: 'HICC Hyderabad',
       time: '01:30 PM',
       date: 'Today',
-      status: 'pending',
+      status: 'pending' as const,
     },
     {
       id: '5',
@@ -91,7 +86,7 @@ const Dashboard = () => {
       destination: 'T Nagar Meeting',
       time: '11:00 AM',
       date: 'Yesterday',
-      status: 'cancelled',
+      status: 'cancelled' as const,
     }
   ];
 

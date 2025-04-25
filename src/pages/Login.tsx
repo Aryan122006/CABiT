@@ -47,21 +47,54 @@ const Login = () => {
   });
 
   const onSubmit = (values: z.infer<typeof userSchema>) => {
-    // For demonstration purposes, simulate successful login
-    login({
-      id: '1',
-      email: values.email,
-      name: activeTab === 'company' ? 'TechCorp India' : 'Raj Kumar',
-      role: activeTab === 'company' ? 'admin' : 'employee',
-      companyId: activeTab === 'company' ? '1' : '1',
-    });
+    // Check for company admin credentials
+    if (activeTab === 'company' && 
+        values.email === 'buygenie@buygenie.com' && 
+        values.password === 'buygenie') {
+      login({
+        id: '1',
+        email: values.email,
+        name: 'BuyGenie India',
+        role: 'admin',
+        companyId: '1',
+      });
+      
+      toast({
+        title: 'Login Successful',
+        description: 'Welcome back, BuyGenie India!',
+      });
+      
+      navigate('/');
+      return;
+    }
     
+    // Check for employee credentials
+    if (activeTab === 'employee' && 
+        values.email === 'aryan@buygenie.com' && 
+        values.password === 'aryan') {
+      login({
+        id: '2',
+        email: values.email,
+        name: 'Aryan Kumar',
+        role: 'employee',
+        companyId: '1',
+      });
+      
+      toast({
+        title: 'Login Successful',
+        description: 'Welcome back, Aryan Kumar!',
+      });
+      
+      navigate('/');
+      return;
+    }
+    
+    // Show error if credentials don't match
     toast({
-      title: 'Login Successful',
-      description: `Welcome back, ${activeTab === 'company' ? 'TechCorp India' : 'Raj Kumar'}!`,
+      variant: 'destructive',
+      title: 'Login Failed',
+      description: 'Invalid email or password. Please try again.',
     });
-    
-    navigate('/');
   };
 
   return (
