@@ -8,6 +8,7 @@ import MainLayout from "./layouts/MainLayout";
 import { AuthProvider } from "./hooks/useAuth";
 import PrivateRoute from "./components/PrivateRoute";
 import Chatbot from "./components/Chatbot";
+import { ThemeProvider } from "./hooks/useTheme";
 
 // Pages
 import Dashboard from "./pages/Dashboard";
@@ -25,37 +26,39 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            {/* Public route */}
-            <Route path="/login" element={<Login />} />
-            
-            {/* Protected routes */}
-            <Route element={<PrivateRoute />}>
-              <Route path="/" element={<MainLayout />}>
-                <Route index element={<Dashboard />} />
-                <Route path="bookings" element={<Bookings />} />
-                <Route path="bookings/new" element={<NewBooking />} />
-                <Route path="tracking" element={<Tracking />} />
-                <Route path="reports" element={<Reports />} />
-                <Route path="branches" element={<Branches />} />
-                <Route path="employees" element={<Employees />} />
-                <Route path="feedback" element={<Feedback />} />
+    <ThemeProvider defaultTheme="light">
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              {/* Public route */}
+              <Route path="/login" element={<Login />} />
+              
+              {/* Protected routes */}
+              <Route element={<PrivateRoute />}>
+                <Route path="/" element={<MainLayout />}>
+                  <Route index element={<Dashboard />} />
+                  <Route path="bookings" element={<Bookings />} />
+                  <Route path="bookings/new" element={<NewBooking />} />
+                  <Route path="tracking" element={<Tracking />} />
+                  <Route path="reports" element={<Reports />} />
+                  <Route path="branches" element={<Branches />} />
+                  <Route path="employees" element={<Employees />} />
+                  <Route path="feedback" element={<Feedback />} />
+                </Route>
               </Route>
-            </Route>
+              
+              {/* Catch-all route */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
             
-            {/* Catch-all route */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          
-          <Chatbot />
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
+            <Chatbot />
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 

@@ -4,7 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Plus, Search, Filter } from 'lucide-react';
+import { Calendar, Plus, Search, Filter, IndianRupee, MapPin, Car, Clock } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import {
   Table,
@@ -15,6 +15,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/useAuth';
 
 interface BookingItem {
   id: string;
@@ -26,78 +27,129 @@ interface BookingItem {
   time: string;
   status: 'scheduled' | 'in-progress' | 'completed' | 'cancelled';
   recurring: boolean;
+  cabType: string;
+  fare: number;
+  distance: number;
+  driverName?: string;
+  vehicleNo?: string;
 }
 
 const Bookings = () => {
   const [filter, setFilter] = useState('');
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'admin';
   
-  // Mock data for bookings
+  // Mock data for bookings with Indian context
   const bookings: BookingItem[] = [
     {
       id: 'booking-1',
-      employeeName: 'Alex Johnson',
+      employeeName: 'Rahul Sharma',
       department: 'Engineering',
-      origin: 'HQ Office',
-      destination: 'JFK Airport',
+      origin: 'Cyber City, Gurugram',
+      destination: 'IGI Airport Terminal 3',
       date: '2025-04-25',
       time: '10:30 AM',
       status: 'scheduled',
       recurring: false,
+      cabType: 'Sedan',
+      fare: 850,
+      distance: 18.5,
+      driverName: 'Manoj Kumar',
+      vehicleNo: 'DL 01 AB 1234'
     },
     {
       id: 'booking-2',
-      employeeName: 'Sarah Williams',
+      employeeName: 'Priya Patel',
       department: 'Marketing',
-      origin: 'Boston Office',
-      destination: 'Client Meeting',
+      origin: 'BKC, Mumbai',
+      destination: 'Nariman Point',
       date: '2025-04-25',
       time: '09:15 AM',
       status: 'in-progress',
       recurring: false,
+      cabType: 'Premium Sedan',
+      fare: 750,
+      distance: 12.3,
+      driverName: 'Suresh Shah',
+      vehicleNo: 'MH 02 CD 5678'
     },
     {
       id: 'booking-3',
-      employeeName: 'Michael Brown',
+      employeeName: 'Vikram Malhotra',
       department: 'Sales',
-      origin: 'Home',
-      destination: 'SF Office',
+      origin: 'Whitefield, Bangalore',
+      destination: 'Electronic City',
       date: '2025-04-25',
       time: '08:45 AM',
       status: 'completed',
       recurring: true,
+      cabType: 'SUV',
+      fare: 950,
+      distance: 22.1,
+      driverName: 'Ravi Naik',
+      vehicleNo: 'KA 03 EF 9012'
     },
     {
       id: 'booking-4',
-      employeeName: 'Emily Davis',
+      employeeName: 'Anjali Desai',
       department: 'HR',
-      origin: 'Hotel',
-      destination: 'Conference Center',
+      origin: 'Madhapur, Hyderabad',
+      destination: 'Rajiv Gandhi Airport',
       date: '2025-04-26',
       time: '01:30 PM',
       status: 'scheduled',
       recurring: false,
+      cabType: 'Sedan',
+      fare: 780,
+      distance: 16.8,
+      driverName: 'Ramesh Reddy',
+      vehicleNo: 'TS 04 GH 3456'
     },
     {
       id: 'booking-5',
-      employeeName: 'Robert Wilson',
+      employeeName: 'Anil Kumar',
       department: 'Finance',
-      origin: 'Miami Office',
-      destination: 'Downtown Meeting',
+      origin: 'T Nagar, Chennai',
+      destination: 'Chennai Airport',
       date: '2025-04-26',
       time: '11:00 AM',
       status: 'cancelled',
       recurring: false,
+      cabType: 'Hatchback',
+      fare: 650,
+      distance: 14.2
     },
     {
       id: 'booking-6',
-      employeeName: 'Jennifer Lopez',
+      employeeName: 'Divya Singh',
       department: 'Customer Support',
-      origin: 'Home',
-      destination: 'NYC Office',
+      origin: 'Koramangala, Bangalore',
+      destination: 'Indiranagar',
       date: '2025-04-26',
       time: '09:00 AM',
       status: 'scheduled',
       recurring: true,
+      cabType: 'Mini',
+      fare: 450,
+      distance: 8.5,
+      driverName: 'Venkat Swamy',
+      vehicleNo: 'KA 05 IJ 7890'
+    },
+    {
+      id: 'booking-7',
+      employeeName: 'Nikhil Verma',
+      department: 'Engineering',
+      origin: 'Powai, Mumbai',
+      destination: 'Worli Sea Face',
+      date: '2025-04-27',
+      time: '10:00 AM',
+      status: 'scheduled',
+      recurring: false,
+      cabType: 'Sedan',
+      fare: 720,
+      distance: 15.3,
+      driverName: 'Pawan Mistry',
+      vehicleNo: 'MH 06 KL 2345'
     },
   ];
   
@@ -105,7 +157,8 @@ const Bookings = () => {
     booking.employeeName.toLowerCase().includes(filter.toLowerCase()) ||
     booking.department.toLowerCase().includes(filter.toLowerCase()) ||
     booking.origin.toLowerCase().includes(filter.toLowerCase()) ||
-    booking.destination.toLowerCase().includes(filter.toLowerCase())
+    booking.destination.toLowerCase().includes(filter.toLowerCase()) ||
+    booking.cabType.toLowerCase().includes(filter.toLowerCase())
   );
   
   const scheduledBookings = filteredBookings.filter(booking => booking.status === 'scheduled');
@@ -134,10 +187,10 @@ const Bookings = () => {
         <TableHeader>
           <TableRow>
             <TableHead>Employee</TableHead>
-            <TableHead>Department</TableHead>
-            <TableHead>Origin</TableHead>
-            <TableHead>Destination</TableHead>
+            <TableHead>Origin → Destination</TableHead>
             <TableHead>Date & Time</TableHead>
+            <TableHead>Cab Type</TableHead>
+            <TableHead>Fare</TableHead>
             <TableHead>Status</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
@@ -159,13 +212,52 @@ const Bookings = () => {
                       <Calendar className="h-3 w-3 inline text-muted-foreground" />
                     </span>
                   )}
+                  <div className="text-xs text-muted-foreground">{booking.department}</div>
                 </TableCell>
-                <TableCell>{booking.department}</TableCell>
-                <TableCell>{booking.origin}</TableCell>
-                <TableCell>{booking.destination}</TableCell>
                 <TableCell>
-                  <div>{new Date(booking.date).toLocaleDateString()}</div>
-                  <div className="text-muted-foreground text-sm">{booking.time}</div>
+                  <div className="flex items-center gap-1">
+                    <MapPin className="h-3 w-3 text-cabit-success flex-shrink-0" />
+                    <span className="text-sm">{booking.origin}</span>
+                  </div>
+                  <div className="flex items-center gap-1 mt-1">
+                    <MapPin className="h-3 w-3 text-cabit-danger flex-shrink-0" />
+                    <span className="text-sm">{booking.destination}</span>
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-1">
+                    {booking.distance} km
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-1">
+                    <Calendar className="h-3 w-3 text-muted-foreground" />
+                    <span>{new Date(booking.date).toLocaleDateString()}</span>
+                  </div>
+                  <div className="flex items-center gap-1 mt-1">
+                    <Clock className="h-3 w-3 text-muted-foreground" />
+                    <span>{booking.time}</span>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-1">
+                    <Car className="h-3 w-3 text-primary" />
+                    <span>{booking.cabType}</span>
+                  </div>
+                  {booking.driverName && (
+                    <div className="text-xs text-muted-foreground mt-1">
+                      Driver: {booking.driverName}
+                    </div>
+                  )}
+                  {booking.vehicleNo && (
+                    <div className="text-xs text-muted-foreground">
+                      {booking.vehicleNo}
+                    </div>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center">
+                    <IndianRupee className="h-3 w-3 text-muted-foreground" />
+                    <span>{booking.fare}</span>
+                  </div>
                 </TableCell>
                 <TableCell>{getStatusBadge(booking.status)}</TableCell>
                 <TableCell className="text-right">
@@ -185,11 +277,13 @@ const Bookings = () => {
     <div className="p-6 space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold">Bookings</h1>
-        <Button asChild>
-          <Link to="/bookings/new">
-            <Plus className="mr-2 h-4 w-4" /> New Booking
-          </Link>
-        </Button>
+        {(isAdmin || user?.role === 'employee') && (
+          <Button asChild>
+            <Link to="/bookings/new">
+              <Plus className="mr-2 h-4 w-4" /> New Booking
+            </Link>
+          </Button>
+        )}
       </div>
       
       <div className="flex flex-col sm:flex-row gap-4 sm:items-center">

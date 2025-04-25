@@ -3,7 +3,9 @@ import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import LiveTracking from '@/components/tracking/LiveTracking';
 import { Button } from '@/components/ui/button';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { useAuth } from '@/hooks/useAuth';
+import { Phone, MapPin, Clock, AlertTriangle } from 'lucide-react';
 
 // Define the TripInfo type with all required properties
 interface TripInfo {
@@ -21,13 +23,15 @@ interface TripInfo {
   startTime: string;
   passengers: number;
   progress: number;
+  driverPhone?: string;
+  emergencyContact?: string;
 }
 
 const Tracking = () => {
   const { user } = useAuth();
   const [selectedTripId, setSelectedTripId] = useState<string | null>(null);
   
-  // Mock data for active trips
+  // Mock data for active trips with Indian context
   const activeTrips: TripInfo[] = [
     {
       id: 'trip-1',
@@ -39,11 +43,13 @@ const Tracking = () => {
       status: 'In Progress',
       eta: '15 min',
       coordinates: { lat: 28.6139, lng: 77.2090 },
-      pickupLocation: 'Delhi HQ, Connaught Place',
-      dropLocation: 'IGI Airport Terminal 3, New Delhi',
+      pickupLocation: 'Cyber City, Gurugram, Delhi NCR',
+      dropLocation: 'Terminal 3, IGI Airport, New Delhi',
       startTime: '10:30 AM',
       passengers: 1,
-      progress: 65
+      progress: 65,
+      driverPhone: '+91 98765 43210',
+      emergencyContact: '1800-123-4567'
     },
     {
       id: 'trip-2',
@@ -55,11 +61,13 @@ const Tracking = () => {
       status: 'Starting',
       eta: '25 min',
       coordinates: { lat: 28.5355, lng: 77.2410 },
-      pickupLocation: 'Delhi Office, Nehru Place',
-      dropLocation: 'Sector 29, Gurgaon',
+      pickupLocation: 'Nehru Place, Delhi',
+      dropLocation: 'Sector 29, Gurugram, Haryana',
       startTime: '11:15 AM',
       passengers: 2,
-      progress: 10
+      progress: 10,
+      driverPhone: '+91 87654 32109',
+      emergencyContact: '1800-123-4567'
     },
     {
       id: 'trip-3',
@@ -71,11 +79,31 @@ const Tracking = () => {
       status: 'In Progress',
       eta: '10 min',
       coordinates: { lat: 28.5700, lng: 77.3200 },
-      pickupLocation: 'Noida Office, Sector 62',
-      dropLocation: 'Delhi HQ, Connaught Place',
+      pickupLocation: 'Sector 62, Noida, Uttar Pradesh',
+      dropLocation: 'Cyber City, Gurugram, Delhi NCR',
       startTime: '09:45 AM',
       passengers: 1,
-      progress: 80
+      progress: 80,
+      driverPhone: '+91 76543 21098',
+      emergencyContact: '1800-123-4567'
+    },
+    {
+      id: 'trip-4',
+      driver: 'Mohit Sharma',
+      vehicle: 'HR 26 AB 3456 - Maruti Ertiga',
+      employee: 'Neha Gupta',
+      origin: 'Gurugram Metro',
+      destination: 'Delhi Airport',
+      status: 'In Progress',
+      eta: '18 min',
+      coordinates: { lat: 28.4595, lng: 77.0266 },
+      pickupLocation: 'HUDA City Centre, Gurugram, Haryana',
+      dropLocation: 'Terminal 1D, IGI Airport, New Delhi',
+      startTime: '11:05 AM',
+      passengers: 3,
+      progress: 40,
+      driverPhone: '+91 65432 10987',
+      emergencyContact: '1800-123-4567'
     }
   ];
 
@@ -85,9 +113,12 @@ const Tracking = () => {
 
   return (
     <div className="p-6 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Live Tracking</h1>
-        <p className="text-muted-foreground">Monitor active trips in real-time</p>
+      <div className="flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold">Live Tracking</h1>
+          <p className="text-muted-foreground">Monitor active trips in real-time across India</p>
+        </div>
+        <ThemeToggle />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -107,7 +138,9 @@ const Tracking = () => {
                 >
                   <div>
                     <div className="font-medium">{trip.employee}</div>
-                    <div className="text-sm text-muted-foreground">{trip.origin} → {trip.destination}</div>
+                    <div className="text-sm text-muted-foreground flex items-center gap-1">
+                      <MapPin className="h-3 w-3" /> {trip.origin} → {trip.destination}
+                    </div>
                   </div>
                 </Button>
               ))}
@@ -126,7 +159,12 @@ const Tracking = () => {
                 </div>
                 <div className="space-y-2">
                   <div className="text-sm font-medium">Driver</div>
-                  <div>{selectedTrip.driver}</div>
+                  <div className="flex justify-between">
+                    <div>{selectedTrip.driver}</div>
+                    <Button variant="ghost" size="sm" className="flex items-center gap-1 h-7 px-2">
+                      <Phone className="h-3 w-3" /> Call
+                    </Button>
+                  </div>
                 </div>
                 <div className="space-y-2">
                   <div className="text-sm font-medium">Vehicle</div>
@@ -135,7 +173,7 @@ const Tracking = () => {
                 <div className="space-y-2">
                   <div className="text-sm font-medium">Status</div>
                   <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-green-500"></span>
+                    <span className="h-2 w-2 rounded-full bg-cabit-success"></span>
                     {selectedTrip.status} (ETA: {selectedTrip.eta})
                   </div>
                 </div>
@@ -147,6 +185,19 @@ const Tracking = () => {
                   <div className="text-sm font-medium">Destination</div>
                   <div>{selectedTrip.dropLocation}</div>
                 </div>
+                <div className="space-y-2">
+                  <div className="text-sm font-medium">Start Time</div>
+                  <div className="flex items-center gap-1">
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    {selectedTrip.startTime}
+                  </div>
+                </div>
+                <div className="pt-3 mt-3 border-t">
+                  <Button variant="outline" className="w-full flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4 text-cabit-danger" />
+                    Emergency Contact
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           )}
@@ -156,6 +207,7 @@ const Tracking = () => {
           <Card className="h-full">
             <CardHeader>
               <CardTitle>Live Map</CardTitle>
+              <CardDescription>Real-time tracking of ride location</CardDescription>
             </CardHeader>
             <CardContent className="h-[calc(100%-5rem)]">
               {selectedTrip && <LiveTracking tripInfo={selectedTrip} />}

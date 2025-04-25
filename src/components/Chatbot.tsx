@@ -23,26 +23,37 @@ type Message = {
 const initialMessages: Message[] = [
   {
     id: "1",
-    content: "👋 Hi there! I'm CABiT Assistant. How can I help you with your cab booking or management needs today?",
+    content: "👋 नमस्ते! I'm CABiT Assistant. How can I help you with your corporate cab booking or management needs today?",
     isUser: false,
     timestamp: new Date(),
   },
 ];
 
-// Predefined responses for the chatbot
+// Enhanced responses for the chatbot with Indian context
 const botResponses: Record<string, string> = {
-  "booking": "To book a cab, go to the Bookings page and click on 'Book a Cab'. You'll need to provide pickup and drop location, date, time, and purpose of travel.",
-  "cancel": "To cancel a booking, go to the Bookings page, find your booking, and click on the cancel button. Please note that cancellations within 1 hour of pickup may incur charges.",
-  "track": "You can track your current cab on the Tracking page. It shows real-time location of the cab, estimated arrival time, and driver details.",
-  "driver": "Driver details are available on the Tracking page once your booking is confirmed. You'll see the driver's name, phone number, and vehicle details.",
-  "report": "You can access various reports on the Reports page. This includes department-wise expenses, usage patterns, and monthly summaries.",
-  "payment": "Payments are handled through corporate accounts. Each ride is billed to your company and itemized in monthly statements.",
-  "feedback": "After each ride, you'll receive a notification to provide feedback. You can also go to the Feedback page to submit or view your past feedback.",
-  "support": "For any issues, please contact our support team at support@cabit.in or call our helpline at +91 1800 123 4567.",
-  "hello": "Hello! How can I assist you with CABiT services today?",
-  "hi": "Hi there! How can I help you with your corporate cab needs?",
+  "booking": "To book a cab, go to the Bookings page and click on 'Book a Cab'. You'll need to provide pickup and drop location, date, time, and purpose of travel. We cover all major cities including Delhi NCR, Mumbai, Bangalore, Chennai, Hyderabad, Pune, and Kolkata.",
+  "cancel": "To cancel a booking, go to the Bookings page, find your booking, and click on the cancel button. Please note that cancellations within 1 hour of pickup may incur charges as per our company policy.",
+  "track": "You can track your current cab on the Tracking page. It shows real-time location of the cab, estimated arrival time, and driver details. Our tracking system works across all major Indian cities with precise GPS accuracy.",
+  "driver": "Driver details are available on the Tracking page once your booking is confirmed. You'll see the driver's name, phone number, vehicle details, and ratings from other employees.",
+  "report": "You can access various reports on the Reports page. This includes department-wise expenses, usage patterns, GST-compliant invoices, and monthly summaries for accounting purposes.",
+  "payment": "Payments are handled through corporate accounts. Each ride is billed to your company and itemized in monthly statements with proper GST documentation for tax purposes.",
+  "feedback": "After each ride, you'll receive a notification to provide feedback. Your inputs help us maintain our service standards and recognize our best drivers.",
+  "support": "For any issues, please contact our support team at support@cabit.in or call our 24x7 helpline at +91 1800 123 4567.",
+  "hello": "नमस्ते! How can I assist you with CABiT services today?",
+  "hi": "नमस्ते! How can I help you with your corporate cab needs today?",
   "thanks": "You're welcome! Is there anything else I can help you with?",
   "thank you": "You're welcome! Is there anything else I can help you with?",
+  "fare": "Our fares are competitive and transparent. For corporate accounts, we offer special packages based on your usage patterns. All fares include GST and can be viewed in detailed monthly reports.",
+  "cities": "CABiT services are available in all major Indian cities including Delhi NCR, Mumbai, Bangalore, Chennai, Hyderabad, Pune, Kolkata, Ahmedabad, Jaipur, and Chandigarh.",
+  "safety": "Safety is our priority. All our drivers undergo background verification, and vehicles are regularly inspected. We also provide real-time tracking and SOS features in our app for emergencies.",
+  "covid": "We follow all COVID-19 safety protocols. Our cabs are regularly sanitized, drivers wear masks, and we maintain proper ventilation. We also offer contactless service options.",
+  "female": "We have a special 'Women's Safety' program with verified female drivers available on request for female employees, especially for late-night travels.",
+  "airport": "We provide specialized airport transfer services with flight tracking, so your cab is adjusted according to your flight's actual arrival time, even if there are delays.",
+  "outstation": "For outstation trips, we offer both one-way and round-trip options with reliable drivers familiar with intercity routes. Packages include driver allowances and permits.",
+  "billing": "Our billing is transparent with detailed GST-compliant invoices. You can set up cost centers, project codes, and employee-wise billing as per your company's requirements.",
+  "peak": "During peak hours in metropolitan cities like Delhi and Mumbai, we recommend booking 30 minutes in advance to ensure timely pickup.",
+  "toll": "All toll charges are included in your final bill with proper documentation for reimbursement purposes.",
+  "gst": "We provide GST-compliant invoices for all your rides. Your company's GST details can be added to your profile for automatic inclusion in all invoices.",
 };
 
 export function Chatbot() {
@@ -92,7 +103,7 @@ export function Chatbot() {
     }
     
     // Default response if no keywords match
-    return "I'm not sure how to help with that specific query. For booking assistance, tracking information, or support, please ask about those topics or contact our support team at support@cabit.in.";
+    return "I'm not sure how to help with that specific query. For booking assistance, tracking information, or support across our Indian operations, please ask about those topics or contact our support team at support@cabit.in or call +91 1800 123 4567.";
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
