@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { z } from 'zod';
@@ -46,11 +45,16 @@ const Login = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof userSchema>) => {
+  const onSubmit = async (values: z.infer<typeof userSchema>) => {
+    console.log('Login attempt:', values.email, 'Tab:', activeTab);
+    
     // Check for company admin credentials
     if (activeTab === 'company' && 
         values.email === 'buygenie@buygenie.com' && 
         values.password === 'buygenie') {
+      
+      console.log('Company admin login successful');
+      
       login({
         id: '1',
         email: values.email,
@@ -72,6 +76,9 @@ const Login = () => {
     if (activeTab === 'employee' && 
         values.email === 'aryan@buygenie.com' && 
         values.password === 'aryan') {
+      
+      console.log('Employee login successful');
+      
       login({
         id: '2',
         email: values.email,
@@ -90,6 +97,7 @@ const Login = () => {
     }
     
     // Show error if credentials don't match
+    console.log('Login failed: invalid credentials');
     toast({
       variant: 'destructive',
       title: 'Login Failed',

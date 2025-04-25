@@ -1,5 +1,5 @@
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 interface User {
   id: string;
@@ -24,12 +24,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return savedUser ? JSON.parse(savedUser) : null;
   });
   
+  // Debug logging
+  useEffect(() => {
+    console.log('AuthProvider initialized, user:', user);
+  }, []);
+  
   const login = (userData: User) => {
+    console.log('Logging in user:', userData);
     setUser(userData);
     localStorage.setItem('cabit_user', JSON.stringify(userData));
   };
   
   const logout = () => {
+    console.log('Logging out user');
     setUser(null);
     localStorage.removeItem('cabit_user');
   };

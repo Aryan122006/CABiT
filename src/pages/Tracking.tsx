@@ -1,190 +1,167 @@
 
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import LiveTracking from '@/components/tracking/LiveTracking';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 
-const mockActiveTrips = [
-  {
-    id: "1",
-    driver: "Rajan Sharma",
-    vehicle: "Swift Dzire - DL 01 AB 1234",
-    employee: "Alex Johnson",
-    origin: "Office HQ",
-    destination: "Airport Terminal 3",
-    status: "In Progress",
-    eta: "15 mins",
-    coordinates: { lat: 28.6139, lng: 77.2090 }
-  },
-  {
-    id: "2", 
-    driver: "Mohit Kumar",
-    vehicle: "Toyota Innova - DL 02 CD 5678",
-    employee: "Sarah Williams",
-    origin: "Office East Branch",
-    destination: "Client Meeting - Connaught Place",
-    status: "Pickup Soon",
-    eta: "5 mins",
-    coordinates: { lat: 28.6304, lng: 77.2177 }
-  },
-  {
-    id: "3",
-    driver: "Vikram Singh",
-    vehicle: "Honda City - DL 03 EF 9012",
-    employee: "Michael Brown",
-    origin: "Office South Branch", 
-    destination: "Residential Complex - Gurgaon",
-    status: "In Progress",
-    eta: "25 mins",
-    coordinates: { lat: 28.4595, lng: 77.0266 }
-  }
-];
+// Define the TripInfo type with all required properties
+interface TripInfo {
+  id: string;
+  driver: string;
+  vehicle: string;
+  employee: string;
+  origin: string;
+  destination: string;
+  status: string;
+  eta: string;
+  coordinates: { lat: number; lng: number };
+  pickupLocation: string;
+  dropLocation: string;
+  startTime: string;
+  passengers: number;
+  progress: number;
+}
 
 const Tracking = () => {
-  const [selectedTrip, setSelectedTrip] = useState(mockActiveTrips[0]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [viewMode, setViewMode] = useState<string>("map");
+  const { user } = useAuth();
+  const [selectedTripId, setSelectedTripId] = useState<string | null>(null);
   
-  // Filter trips based on search query
-  const filteredTrips = mockActiveTrips.filter(trip => 
-    trip.employee.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    trip.destination.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    trip.driver.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-  
+  // Mock data for active trips
+  const activeTrips: TripInfo[] = [
+    {
+      id: 'trip-1',
+      driver: 'Rakesh Singh',
+      vehicle: 'DL 01 AB 1234 - Swift Dzire',
+      employee: 'Aryan Kumar',
+      origin: 'Delhi HQ',
+      destination: 'IGI Airport T3',
+      status: 'In Progress',
+      eta: '15 min',
+      coordinates: { lat: 28.6139, lng: 77.2090 },
+      pickupLocation: 'Delhi HQ, Connaught Place',
+      dropLocation: 'IGI Airport Terminal 3, New Delhi',
+      startTime: '10:30 AM',
+      passengers: 1,
+      progress: 65
+    },
+    {
+      id: 'trip-2',
+      driver: 'Vijay Kumar',
+      vehicle: 'DL 02 CD 5678 - Innova Crysta',
+      employee: 'Deepak Verma',
+      origin: 'Delhi Office',
+      destination: 'Gurgaon Sector 29',
+      status: 'Starting',
+      eta: '25 min',
+      coordinates: { lat: 28.5355, lng: 77.2410 },
+      pickupLocation: 'Delhi Office, Nehru Place',
+      dropLocation: 'Sector 29, Gurgaon',
+      startTime: '11:15 AM',
+      passengers: 2,
+      progress: 10
+    },
+    {
+      id: 'trip-3',
+      driver: 'Amit Patel',
+      vehicle: 'DL 03 EF 9012 - Honda City',
+      employee: 'Priya Sharma',
+      origin: 'Noida Office',
+      destination: 'Delhi HQ',
+      status: 'In Progress',
+      eta: '10 min',
+      coordinates: { lat: 28.5700, lng: 77.3200 },
+      pickupLocation: 'Noida Office, Sector 62',
+      dropLocation: 'Delhi HQ, Connaught Place',
+      startTime: '09:45 AM',
+      passengers: 1,
+      progress: 80
+    }
+  ];
+
+  const selectedTrip = selectedTripId 
+    ? activeTrips.find(trip => trip.id === selectedTripId) 
+    : activeTrips[0];
+
   return (
-    <div className="p-6 space-y-6 animate-fade-in">
-      <div className="flex justify-between items-center mb-6">
+    <div className="p-6 space-y-6">
+      <div>
         <h1 className="text-3xl font-bold">Live Tracking</h1>
-        <div className="flex items-center space-x-4">
-          <div className="relative">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search trips..."
-              className="pl-8 w-[250px]"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          <Tabs
-            value={viewMode}
-            onValueChange={setViewMode}
-            className="w-[250px]"
-          >
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="map">Map View</TabsTrigger>
-              <TabsTrigger value="list">List View</TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </div>
+        <p className="text-muted-foreground">Monitor active trips in real-time</p>
       </div>
-      
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-1">
-          <CardHeader>
-            <CardTitle className="text-lg font-medium">Active Trips</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {filteredTrips.length === 0 ? (
-                <div className="text-center py-8 text-muted-foreground">
-                  No trips found matching your search
-                </div>
-              ) : (
-                filteredTrips.map((trip) => (
-                  <div 
-                    key={trip.id}
-                    onClick={() => setSelectedTrip(trip)}
-                    className={`p-4 border rounded-lg cursor-pointer transition-colors ${
-                      selectedTrip.id === trip.id 
-                        ? "bg-primary/10 border-primary" 
-                        : "hover:bg-muted"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-1">
-                      <h4 className="font-medium truncate">{trip.employee}</h4>
-                      <span className="text-xs bg-blue-100 text-blue-800 py-1 px-2 rounded">
-                        ETA: {trip.eta}
-                      </span>
-                    </div>
-                    <div className="text-sm mb-1 truncate">
-                      <span className="text-muted-foreground">To: </span>
-                      {trip.destination}
-                    </div>
-                    <div className="text-sm text-muted-foreground truncate">
-                      {trip.vehicle}
-                    </div>
+        <div className="lg:col-span-1 space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Active Trips</CardTitle>
+              <CardDescription>Select a trip to view details</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {activeTrips.map((trip) => (
+                <Button
+                  key={trip.id}
+                  variant={selectedTrip?.id === trip.id ? "default" : "outline"}
+                  className="w-full justify-start text-left"
+                  onClick={() => setSelectedTripId(trip.id)}
+                >
+                  <div>
+                    <div className="font-medium">{trip.employee}</div>
+                    <div className="text-sm text-muted-foreground">{trip.origin} → {trip.destination}</div>
                   </div>
-                ))
-              )}
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Tabs 
-          value={viewMode} 
-          className="lg:col-span-2"
-        >
-          <TabsContent value="map" className="mt-0">
-            <Card className="h-[500px]">
-              <CardContent className="p-0">
-                <LiveTracking trip={selectedTrip} />
-              </CardContent>
-            </Card>
-          </TabsContent>
-          <TabsContent value="list" className="mt-0">
+                </Button>
+              ))}
+            </CardContent>
+          </Card>
+
+          {selectedTrip && (
             <Card>
-              <CardContent className="p-6">
-                <div className="space-y-6">
-                  <div className="space-y-2">
-                    <h3 className="text-lg font-medium">{selectedTrip.employee}</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <div>
-                          <span className="text-sm text-muted-foreground">From:</span>
-                          <p className="text-sm font-medium">{selectedTrip.origin}</p>
-                        </div>
-                        <div>
-                          <span className="text-sm text-muted-foreground">To:</span>
-                          <p className="text-sm font-medium">{selectedTrip.destination}</p>
-                        </div>
-                        <div>
-                          <span className="text-sm text-muted-foreground">ETA:</span>
-                          <p className="text-sm font-medium">{selectedTrip.eta}</p>
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <div>
-                          <span className="text-sm text-muted-foreground">Driver:</span>
-                          <p className="text-sm font-medium">{selectedTrip.driver}</p>
-                        </div>
-                        <div>
-                          <span className="text-sm text-muted-foreground">Vehicle:</span>
-                          <p className="text-sm font-medium">{selectedTrip.vehicle}</p>
-                        </div>
-                        <div>
-                          <span className="text-sm text-muted-foreground">Status:</span>
-                          <p className="text-sm font-medium">{selectedTrip.status}</p>
-                        </div>
-                      </div>
-                    </div>
+              <CardHeader>
+                <CardTitle>Trip Details</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <div className="text-sm font-medium">Employee</div>
+                  <div>{selectedTrip.employee}</div>
+                </div>
+                <div className="space-y-2">
+                  <div className="text-sm font-medium">Driver</div>
+                  <div>{selectedTrip.driver}</div>
+                </div>
+                <div className="space-y-2">
+                  <div className="text-sm font-medium">Vehicle</div>
+                  <div>{selectedTrip.vehicle}</div>
+                </div>
+                <div className="space-y-2">
+                  <div className="text-sm font-medium">Status</div>
+                  <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-green-500"></span>
+                    {selectedTrip.status} (ETA: {selectedTrip.eta})
                   </div>
-                  <div className="flex space-x-2">
-                    <Button variant="outline" className="flex-1">
-                      Contact Driver
-                    </Button>
-                    <Button className="flex-1">
-                      Send ETA Update
-                    </Button>
-                  </div>
+                </div>
+                <div className="space-y-2">
+                  <div className="text-sm font-medium">Origin</div>
+                  <div>{selectedTrip.pickupLocation}</div>
+                </div>
+                <div className="space-y-2">
+                  <div className="text-sm font-medium">Destination</div>
+                  <div>{selectedTrip.dropLocation}</div>
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
-        </Tabs>
+          )}
+        </div>
+
+        <div className="lg:col-span-2 h-[600px]">
+          <Card className="h-full">
+            <CardHeader>
+              <CardTitle>Live Map</CardTitle>
+            </CardHeader>
+            <CardContent className="h-[calc(100%-5rem)]">
+              {selectedTrip && <LiveTracking tripInfo={selectedTrip} />}
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
