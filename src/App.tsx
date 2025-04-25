@@ -5,6 +5,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
+import { AuthProvider } from "./hooks/useAuth";
+import PrivateRoute from "./components/PrivateRoute";
+import Chatbot from "./components/Chatbot";
 
 // Pages
 import Dashboard from "./pages/Dashboard";
@@ -13,30 +16,46 @@ import NewBooking from "./pages/NewBooking";
 import Tracking from "./pages/Tracking";
 import Reports from "./pages/Reports";
 import Branches from "./pages/Branches";
+import Employees from "./pages/Employees";
+import Feedback from "./pages/Feedback";
 import NotFound from "./pages/NotFound";
+import Login from "./pages/Login";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<MainLayout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="bookings" element={<Bookings />} />
-            <Route path="bookings/new" element={<NewBooking />} />
-            <Route path="tracking" element={<Tracking />} />
-            <Route path="reports" element={<Reports />} />
-            <Route path="branches" element={<Branches />} />
-          </Route>
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            {/* Public route */}
+            <Route path="/login" element={<Login />} />
+            
+            {/* Protected routes */}
+            <Route element={<PrivateRoute />}>
+              <Route path="/" element={<MainLayout />}>
+                <Route index element={<Dashboard />} />
+                <Route path="bookings" element={<Bookings />} />
+                <Route path="bookings/new" element={<NewBooking />} />
+                <Route path="tracking" element={<Tracking />} />
+                <Route path="reports" element={<Reports />} />
+                <Route path="branches" element={<Branches />} />
+                <Route path="employees" element={<Employees />} />
+                <Route path="feedback" element={<Feedback />} />
+              </Route>
+            </Route>
+            
+            {/* Catch-all route */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+          
+          <Chatbot />
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 

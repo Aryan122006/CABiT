@@ -23,9 +23,12 @@ import {
   Users, 
   Settings
 } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import UserMenu from './UserMenu';
 
 export function AppSidebar() {
   const location = useLocation();
+  const { user } = useAuth();
   
   const isActive = (path: string) => {
     return location.pathname === path;
@@ -37,9 +40,14 @@ export function AppSidebar() {
     { title: "Tracking", path: "/tracking", icon: Car },
     { title: "Reports", path: "/reports", icon: FileText },
     { title: "Branches", path: "/branches", icon: Building },
-    { title: "Employees", path: "/employees", icon: Users },
-    { title: "Feedback", path: "/feedback", icon: MessageSquare },
   ];
+  
+  // Add items that depend on user role
+  if (user?.role === 'admin') {
+    mainMenuItems.push({ title: "Employees", path: "/employees", icon: Users });
+  }
+  
+  mainMenuItems.push({ title: "Feedback", path: "/feedback", icon: MessageSquare });
   
   return (
     <Sidebar className="border-r">
@@ -47,6 +55,7 @@ export function AppSidebar() {
         <div className="flex items-center gap-2 px-2">
           <Car className="h-6 w-6 text-sidebar-foreground" />
           <span className="font-bold text-xl text-sidebar-foreground">CABiT</span>
+          <span className="text-xs bg-primary text-primary-foreground px-1 rounded">India</span>
         </div>
         <SidebarTrigger className="absolute right-2 top-4 md:hidden" />
       </SidebarHeader>
@@ -87,19 +96,7 @@ export function AppSidebar() {
         </SidebarMenu>
         
         <div className="p-3 mt-2">
-          <div className="flex items-center gap-3 px-3 py-2 rounded-md bg-sidebar-accent">
-            <div className="flex-shrink-0 h-8 w-8 bg-sidebar-primary rounded-full flex items-center justify-center text-sidebar-primary-foreground">
-              A
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-sidebar-accent-foreground truncate">
-                Admin User
-              </p>
-              <p className="text-xs text-sidebar-accent-foreground/70 truncate">
-                admin@cabit.com
-              </p>
-            </div>
-          </div>
+          <UserMenu />
         </div>
       </SidebarFooter>
     </Sidebar>

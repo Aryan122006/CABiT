@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Building, Calendar, Car, FileText } from 'lucide-react';
+import { Building, Calendar, Car, FileText, IndianRupee } from 'lucide-react';
 import StatCard from '@/components/dashboard/StatCard';
 import TripStatusChart from '@/components/dashboard/TripStatusChart';
 import TripRecentActivity from '@/components/dashboard/TripRecentActivity';
@@ -8,17 +8,20 @@ import DepartmentCostChart from '@/components/dashboard/DepartmentCostChart';
 import BranchSelector from '@/components/dashboard/BranchSelector';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
 
 const Dashboard = () => {
   const [selectedBranchId, setSelectedBranchId] = useState('all');
+  const { user } = useAuth();
   
   // Mock data for branches
   const branches = [
-    { id: 'all', name: 'All Branches', location: 'Global' },
-    { id: 'hq', name: 'Headquarters', location: 'New York' },
-    { id: 'west', name: 'West Branch', location: 'San Francisco' },
-    { id: 'east', name: 'East Branch', location: 'Boston' },
-    { id: 'south', name: 'South Branch', location: 'Miami' },
+    { id: 'all', name: 'All Branches', location: 'Pan India' },
+    { id: 'delhi', name: 'Delhi HQ', location: 'New Delhi' },
+    { id: 'mumbai', name: 'Mumbai Branch', location: 'Mumbai' },
+    { id: 'bangalore', name: 'Bangalore Tech Hub', location: 'Bangalore' },
+    { id: 'hyderabad', name: 'Hyderabad Office', location: 'Hyderabad' },
+    { id: 'chennai', name: 'Chennai Branch', location: 'Chennai' },
   ];
   
   // Mock data for trip status chart
@@ -31,61 +34,61 @@ const Dashboard = () => {
   
   // Mock data for department cost chart
   const departmentCostData = [
-    { department: 'HR', cost: 3200, color: '#1d5bb9' },
-    { department: 'Engineering', cost: 5100, color: '#25b003' },
-    { department: 'Sales', cost: 4100, color: '#ffbf00' },
-    { department: 'Marketing', cost: 2400, color: '#e71d36' },
-    { department: 'Finance', cost: 1800, color: '#9b59b6' },
+    { department: 'HR', cost: 32000, color: '#1d5bb9' },
+    { department: 'Engineering', cost: 51000, color: '#25b003' },
+    { department: 'Sales', cost: 41000, color: '#ffbf00' },
+    { department: 'Marketing', cost: 24000, color: '#e71d36' },
+    { department: 'Finance', cost: 18000, color: '#9b59b6' },
   ];
   
   // Mock data for recent activity - converted to non-readonly array
   const recentActivities = [
     {
       id: '1',
-      employeeName: 'Alex Johnson',
+      employeeName: 'Raj Kumar',
       departmentName: 'Engineering',
-      origin: 'HQ Office',
-      destination: 'JFK Airport',
+      origin: 'Delhi HQ',
+      destination: 'IGI Airport T3',
       time: '10:30 AM',
       date: 'Today',
       status: 'active',
     },
     {
       id: '2',
-      employeeName: 'Sarah Williams',
+      employeeName: 'Priya Sharma',
       departmentName: 'Marketing',
-      origin: 'Boston Office',
-      destination: 'Client Meeting',
+      origin: 'Mumbai Office',
+      destination: 'Nariman Point',
       time: '09:15 AM',
       date: 'Today',
       status: 'completed',
     },
     {
       id: '3',
-      employeeName: 'Michael Brown',
+      employeeName: 'Vikram Singh',
       departmentName: 'Sales',
       origin: 'Home',
-      destination: 'SF Office',
+      destination: 'Bangalore Office',
       time: '08:45 AM',
       date: 'Today',
       status: 'completed',
     },
     {
       id: '4',
-      employeeName: 'Emily Davis',
+      employeeName: 'Ananya Patel',
       departmentName: 'HR',
-      origin: 'Hotel',
-      destination: 'Conference Center',
+      origin: 'Hotel Taj',
+      destination: 'HICC Hyderabad',
       time: '01:30 PM',
       date: 'Today',
       status: 'pending',
     },
     {
       id: '5',
-      employeeName: 'Robert Wilson',
+      employeeName: 'Deepak Verma',
       departmentName: 'Finance',
-      origin: 'Miami Office',
-      destination: 'Downtown Meeting',
+      origin: 'Chennai Office',
+      destination: 'T Nagar Meeting',
       time: '11:00 AM',
       date: 'Yesterday',
       status: 'cancelled',
@@ -95,7 +98,10 @@ const Dashboard = () => {
   return (
     <div className="p-6 space-y-6 animate-fade-in">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <div>
+          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <p className="text-muted-foreground">Welcome back, {user?.name}</p>
+        </div>
         <div className="flex items-center gap-4">
           <BranchSelector 
             branches={branches}
@@ -129,16 +135,16 @@ const Dashboard = () => {
         />
         <StatCard
           title="Monthly Spend"
-          value="$24,500"
+          value="₹2,45,000"
           description="April 2025"
-          icon={<FileText className="h-4 w-4" />}
+          icon={<IndianRupee className="h-4 w-4" />}
           trend="down"
           trendValue="8% from last month"
         />
         <StatCard
           title="Active Branches"
-          value="4"
-          description="All regions"
+          value="5"
+          description="Pan India"
           icon={<Building className="h-4 w-4" />}
         />
       </div>
