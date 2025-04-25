@@ -38,7 +38,7 @@ const Dashboard = () => {
     { department: 'Finance', cost: 1800, color: '#9b59b6' },
   ];
   
-  // Mock data for recent activity
+  // Mock data for recent activity - converted to non-readonly array
   const recentActivities = [
     {
       id: '1',
@@ -90,7 +90,7 @@ const Dashboard = () => {
       date: 'Yesterday',
       status: 'cancelled',
     }
-  ] as const;
+  ];
 
   return (
     <div className="p-6 space-y-6 animate-fade-in">
