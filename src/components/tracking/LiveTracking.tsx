@@ -6,35 +6,30 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 
-interface DriverInfo {
-  id: string;
-  name: string;
-  phone: string;
-  photo?: string;
-  rating: number;
-  vehicleNumber: string;
-  vehicleModel: string;
-}
-
+// Define interfaces to match the Tracking.tsx expected structure
 interface TripInfo {
   id: string;
-  status: 'active' | 'pending' | 'completed' | 'cancelled';
+  driver: string;
+  vehicle: string;
+  employee: string;
+  origin: string;
+  destination: string;
+  status: string;
+  eta: string;
+  coordinates: { lat: number; lng: number };
   pickupLocation: string;
   dropLocation: string;
   startTime: string;
-  eta: string;
   passengers: number;
-  driver: DriverInfo;
-  currentLocation?: { lat: number; lng: number };
   progress: number;
 }
 
 interface LiveTrackingProps {
-  trip: TripInfo;
+  tripInfo: TripInfo;
   className?: string;
 }
 
-const LiveTracking = ({ trip, className }: LiveTrackingProps) => {
+const LiveTracking = ({ tripInfo, className }: LiveTrackingProps) => {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const [isMapLoaded, setIsMapLoaded] = useState(false);
 
@@ -50,8 +45,10 @@ const LiveTracking = ({ trip, className }: LiveTrackingProps) => {
 
   const getStatusBadgeClass = (status: string) => {
     switch (status) {
+      case 'In Progress':
       case 'active':
         return 'bg-cabit-success';
+      case 'Starting':
       case 'pending':
         return 'bg-cabit-warning text-black';
       case 'completed':
@@ -63,13 +60,22 @@ const LiveTracking = ({ trip, className }: LiveTrackingProps) => {
     }
   };
 
+  // Get driver info from the string format in tripInfo.driver
+  const driverName = tripInfo?.driver || '';
+  const driverInitials = driverName ? driverName.substring(0, 2) : '';
+
+  // Extract vehicle details
+  const vehicleDetails = tripInfo?.vehicle?.split(' - ') || [];
+  const vehicleNumber = vehicleDetails[0] || '';
+  const vehicleModel = vehicleDetails[1] || '';
+
   return (
     <Card className={cn("", className)}>
       <CardHeader className="pb-2">
         <div className="flex justify-between items-center">
           <CardTitle>Live Tracking</CardTitle>
-          <Badge className={getStatusBadgeClass(trip.status)}>
-            {trip.status.charAt(0).toUpperCase() + trip.status.slice(1)}
+          <Badge className={getStatusBadgeClass(tripInfo.status)}>
+            {tripInfo.status}
           </Badge>
         </div>
       </CardHeader>
@@ -96,8 +102,8 @@ const LiveTracking = ({ trip, className }: LiveTrackingProps) => {
                   
                   {/* Car icon at the trip progress position */}
                   <circle 
-                    cx={100 + (400 * (trip.progress / 100))} 
-                    cy={300 - Math.sin(Math.PI * (trip.progress / 100)) * 150} 
+                    cx={100 + (400 * (tripInfo.progress / 100))} 
+                    cy={300 - Math.sin(Math.PI * (tripInfo.progress / 100)) * 150} 
                     r="12" 
                     fill="#0b3d91"
                     className="animate-pulse-light"
@@ -113,8 +119,8 @@ const LiveTracking = ({ trip, className }: LiveTrackingProps) => {
             <div className="space-y-1">
               <p className="text-sm font-medium">Trip Progress</p>
               <div className="flex items-center gap-3">
-                <Progress value={trip.progress} className="h-2" />
-                <span className="text-sm font-medium">{trip.progress}%</span>
+                <Progress value={tripInfo.progress} className="h-2" />
+                <span className="text-sm font-medium">{tripInfo.progress}%</span>
               </div>
             </div>
           </div>
@@ -122,31 +128,30 @@ const LiveTracking = ({ trip, className }: LiveTrackingProps) => {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <p className="text-xs text-muted-foreground">Pickup</p>
-              <p className="text-sm font-medium truncate">{trip.pickupLocation}</p>
+              <p className="text-sm font-medium truncate">{tripInfo.pickupLocation}</p>
             </div>
             <div>
               <p className="text-xs text-muted-foreground">Drop-off</p>
-              <p className="text-sm font-medium truncate">{trip.dropLocation}</p>
+              <p className="text-sm font-medium truncate">{tripInfo.dropLocation}</p>
             </div>
             <div>
               <p className="text-xs text-muted-foreground">Start Time</p>
-              <p className="text-sm font-medium">{trip.startTime}</p>
+              <p className="text-sm font-medium">{tripInfo.startTime}</p>
             </div>
             <div>
               <p className="text-xs text-muted-foreground">ETA</p>
-              <p className="text-sm font-medium">{trip.eta}</p>
+              <p className="text-sm font-medium">{tripInfo.eta}</p>
             </div>
           </div>
           
           <div className="flex items-center pt-2 border-t">
             <Avatar className="h-10 w-10 border">
-              <AvatarImage src={trip.driver.photo} />
-              <AvatarFallback>{trip.driver.name.substr(0, 2)}</AvatarFallback>
+              <AvatarFallback>{driverInitials}</AvatarFallback>
             </Avatar>
             <div className="ml-3 space-y-0.5">
-              <p className="text-sm font-medium">{trip.driver.name}</p>
+              <p className="text-sm font-medium">{driverName}</p>
               <p className="text-xs text-muted-foreground flex items-center gap-1">
-                <span>★</span> {trip.driver.rating} • {trip.driver.vehicleModel} • {trip.driver.vehicleNumber}
+                <span>★</span> 4.8 • {vehicleModel} • {vehicleNumber}
               </p>
             </div>
           </div>
